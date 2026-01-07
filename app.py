@@ -43,13 +43,6 @@ st.markdown("""
         background: repeating-linear-gradient(45deg, transparent, transparent 40px, rgba(212, 175, 55, 0.05) 40px, rgba(212, 175, 55, 0.05) 41px);
         pointer-events: none;
     }
-
-    .curio {
-        font-size: 2.8rem;
-        filter: drop-shadow(0 0 12px #D4AF37);
-        animation: curio-float 4s infinite cubic-bezier(0.45, 0.05, 0.55, 0.95);
-        position: relative; /* 脱离绝对定位，交由 Flex 布局 */
-    }
     
     @keyframes curio-float {
         0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.8; }
