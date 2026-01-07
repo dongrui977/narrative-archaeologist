@@ -1,177 +1,189 @@
 import streamlit as st
 from openai import OpenAI
 
-# 1. 视觉工程：甜品台氛围感 CSS
-st.set_page_config(page_title="MindMemo | 心灵甜品台", layout="centered")
+# 1. 视觉黑科技：香奈儿黑白美学 + 圣光闪烁
+st.set_page_config(page_title="MindMemo | Haute Couture", layout="centered")
 
 st.markdown("""
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@200;500&family=ZCOOL+XiaoWei&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Noto+Serif+SC:wght@200;500&display=swap');
 
-    /* 背景：柔和的丝绒米色/奶油色调 */
+    /* 全局：极致黑底 */
     .stApp {
-        background: radial-gradient(circle at center, #fdf8f2 0%, #f4eae0 100%);
-        color: #8c7355;
+        background-color: #000000;
+        color: #FFFFFF;
         font-family: 'Noto Serif SC', serif;
     }
 
-    /* 精灵闪烁动画 */
-    .pixie-dust {
+    /* 圣光闪烁粒子 */
+    .shimmer-bg {
         position: fixed;
         top: 0; left: 0; width: 100%; height: 100%;
+        background: radial-gradient(circle at 50% 50%, rgba(212, 167, 108, 0.05) 0%, transparent 80%);
         pointer-events: none;
-        background-image: radial-gradient(#d4a76c 1px, transparent 1px);
-        background-size: 50px 50px;
-        animation: sparkle 10s linear infinite;
-        opacity: 0.3;
         z-index: 0;
-    }
-    @keyframes sparkle {
-        0% { transform: translateY(0px); opacity: 0.2; }
-        50% { opacity: 0.5; }
-        100% { transform: translateY(-100px); opacity: 0.2; }
     }
 
     header, footer, #MainMenu {visibility: hidden;}
 
-    /* 甜品台容器 */
-    .dessert-stage {
-        text-align: center;
-        padding-top: 50px;
-        z-index: 1;
-        position: relative;
-    }
-
-    .dessert-icon {
-        font-size: 4rem;
-        margin-bottom: 20px;
-        filter: drop-shadow(0 10px 15px rgba(140, 115, 85, 0.2));
-        animation: float 3s ease-in-out infinite;
-    }
-    @keyframes float {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-10px); }
-    }
-
-    .dessert-title {
-        font-family: 'ZCOOL XiaoWei', serif;
+    /* 场景标题：罗马石刻感 */
+    .chanel-title {
+        font-family: 'Cinzel', serif;
         font-size: 2.2rem;
-        color: #634d34;
-        letter-spacing: 3px;
-        margin-bottom: 10px;
+        text-align: center;
+        letter-spacing: 12px;
+        margin-top: 50px;
+        color: #d4a76c;
+        text-transform: uppercase;
     }
 
-    /* 输入框：解决重叠，优雅半透明 */
+    .chanel-subtitle {
+        text-align: center;
+        font-size: 0.8rem;
+        letter-spacing: 5px;
+        opacity: 0.5;
+        margin-bottom: 50px;
+    }
+
+    /* 输入框：香奈儿极简线条 */
     .stTextArea textarea {
-        background-color: rgba(255, 255, 255, 0.4) !important;
-        border: 1px solid rgba(140, 115, 85, 0.1) !important;
-        color: #634d34 !important;
-        font-size: 1.1rem !important;
-        border-radius: 15px !important;
-        padding: 20px !important;
-        line-height: 1.6 !important;
+        background-color: transparent !important;
+        border: none !important;
+        border-bottom: 1px solid rgba(212, 167, 108, 0.3) !important;
+        color: #FFFFFF !important;
+        font-size: 1.2rem !important;
+        text-align: center !important;
+        border-radius: 0 !important;
+        padding: 30px !important;
+        transition: 0.5s;
     }
     .stTextArea textarea:focus {
-        background-color: rgba(255, 255, 255, 0.7) !important;
-        border: 1px solid #d4a76c !important;
-        box-shadow: 0 0 20px rgba(212, 167, 108, 0.2) !important;
+        border-bottom: 1px solid #d4a76c !important;
+        box-shadow: none !important;
     }
 
-    /* 按钮：马卡龙色系按钮 */
+    /* 按钮：高定成衣风格 */
     .stButton > button {
-        background-color: #8c7355 !important;
-        color: #fff !important;
-        border-radius: 25px !important;
-        border: none !important;
-        padding: 10px 40px !important;
-        transition: 0.3s;
-        box-shadow: 0 4px 15px rgba(140, 115, 85, 0.2) !important;
+        background-color: transparent !important;
+        color: #d4a76c !important;
+        border: 1px solid #d4a76c !important;
+        width: 100%;
+        padding: 15px 0 !important;
+        letter-spacing: 8px;
+        font-family: 'Cinzel', serif;
+        transition: 0.8s;
+        border-radius: 0px !important;
     }
     .stButton > button:hover {
-        background-color: #634d34 !important;
-        transform: translateY(-2px);
+        background-color: #d4a76c !important;
+        color: #000 !important;
+        box-shadow: 0 0 30px rgba(212, 167, 108, 0.4);
     }
 
-    /* 结果卡片：骨瓷感 */
-    .memo-card {
-        background: #fff;
-        border: none;
-        padding: 40px;
-        border-radius: 20px;
-        box-shadow: 0 20px 40px rgba(0,0,0,0.05);
-        color: #634d34;
-        line-height: 2;
-        margin-top: 30px;
+    /* 圣光卡片：3:4 黄金比例 + 边缘闪烁 */
+    .haute-card {
+        background: #FFFFFF;
+        color: #000000;
+        width: 100%;
+        max-width: 450px;
+        aspect-ratio: 3 / 4; /* 黄金比例 */
+        margin: 50px auto;
+        padding: 60px 40px;
+        position: relative;
+        box-shadow: 0 0 50px rgba(255, 255, 255, 0.1);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        animation: cardShimmer 3s infinite alternate;
     }
-    .memo-card h3 { color: #d4a76c !important; }
+
+    @keyframes cardShimmer {
+        from { box-shadow: 0 0 20px rgba(212, 167, 108, 0.1); }
+        to { box-shadow: 0 0 50px rgba(212, 167, 108, 0.4); }
+    }
+
+    .haute-card h3 {
+        font-family: 'Cinzel', serif;
+        font-size: 1rem;
+        color: #000;
+        border-bottom: 2px solid #000;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+    }
+    
+    .haute-card p {
+        font-size: 0.95rem;
+        line-height: 1.8;
+        color: #333;
+    }
     </style>
-    <div class="pixie-dust"></div>
+    <div class="shimmer-bg"></div>
     """, unsafe_allow_html=True)
 
-# 2. 会话管理
+# 2. 状态控制
 if 'step' not in st.session_state:
     st.session_state.step = 0
 if 'answers' not in st.session_state:
     st.session_state.answers = []
 
-# 甜品定义
-desserts = [
-    {"icon": "🍮", "title": "原生底色", "label": "香草焦糖布丁 - 挖掘最柔软的最初记忆"},
-    {"icon": "🍰", "title": "高光至暗", "label": "红丝绒蛋糕 - 浓郁的骄傲与深邃的无助"},
-    {"icon": "☕", "title": "身体记号", "label": "黑咖啡 - 苦涩中透出的身体警讯"},
-    {"icon": "🍬", "title": "重要他人", "label": "手工夹心糖 - 谁是那层让你爱恨交织的糖衣？"},
-    {"icon": "🥨", "title": "转折执念", "label": "扭结饼 - 那些发誓不重复却绕不开的圈子"}
+scenes = [
+    {"title": "The Origin", "sub": "🌱 原生底色"},
+    {"title": "The Duality", "sub": "📈 高光与至暗"},
+    {"title": "The Echo", "sub": "💊 身体记号"},
+    {"title": "The Significant", "sub": "🤝 关键关系"},
+    {"title": "The Pattern", "sub": "🔀 转折与执念"}
 ]
 
-# 3. 核心流程
-if st.session_state.step < len(desserts):
-    d = desserts[st.session_state.step]
-    st.markdown(f'''
-        <div class="dessert-stage">
-            <div class="dessert-icon">{d['icon']}</div>
-            <div class="dessert-title">{d['title']}</div>
-            <p style="opacity:0.7;">{d['label']}</p>
-        </div>
-    ''', unsafe_allow_html=True)
+# 3. 逻辑渲染
+if st.session_state.step < len(scenes):
+    s = scenes[st.session_state.step]
+    st.markdown(f'<div class="chanel-title">{s["title"]}</div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="chanel-subtitle">{s["sub"]}</div>', unsafe_allow_html=True)
     
-    ans = st.text_area("", key=f"ans_{st.session_state.step}", height=180, label_visibility="collapsed", placeholder="请品尝并记录您的感受...")
+    ans = st.text_area("", key=f"ans_{st.session_state.step}", height=200, label_visibility="collapsed", placeholder=". . . .")
     
     col1, col2, col3 = st.columns([1, 1, 1])
     with col2:
-        if st.button("品尝下一款" if st.session_state.step < 4 else "封存今日甜品"):
+        if st.button("PROCEED" if st.session_state.step < 4 else "RECONSTRUCT"):
             if ans:
                 st.session_state.answers.append(ans)
                 st.session_state.step += 1
                 st.rerun()
+
 else:
-    st.markdown('<div class="dessert-stage"><div class="dessert-icon">🥨</div><div class="dessert-title">甜品台已撤餐</div></div>', unsafe_allow_html=True)
+    st.markdown('<div class="chanel-title">Finished</div>', unsafe_allow_html=True)
     
-    col1, col2, col3 = st.columns([1, 1, 1])
-    with col2:
-        if st.button("查看您的心理卡片"):
-            with st.spinner("MindMemo 引擎分析中..."):
-                try:
-                    client = OpenAI(api_key=st.secrets["DEEPSEEK_API_KEY"], base_url="https://api.deepseek.com")
-                    full_context = "\n".join(st.session_state.answers)
+    if st.button("OPEN THE ARCHIVE"):
+        with st.spinner(""):
+            try:
+                client = OpenAI(api_key=st.secrets["DEEPSEEK_API_KEY"], base_url="https://api.deepseek.com")
+                full_context = "\n".join(st.session_state.answers)
+                
+                prompt = f"""
+                你是一个名为 "MindMemo" 的心理分析引擎。
+                任务：生成一张极其简短、深刻的“心理卡片”。
+                分析内容：{full_context}
+                
+                输出格式：
+                ### 🏷️ 智能标签
+                ### 🧠 思维侦探 (CBT)
+                ### 🍃 接纳与行动 (ACT)
+                """
+                
+                response = client.chat.completions.create(model="deepseek-chat", messages=[{"role": "user", "content": prompt}])
+                
+                # 圣光闪烁卡片显示
+                st.markdown(f'''
+                    <div class="haute-card">
+                        {response.choices[0].message.content}
+                    </div>
+                ''', unsafe_allow_html=True)
+                
+                # 循环逻辑
+                if st.button("REWATCH"):
+                    st.session_state.step = 0
+                    st.session_state.answers = []
+                    st.rerun()
                     
-                    prompt = f"""
-                    你是一个名为 "MindMemo" 的后台心理分析引擎。
-                    任务：对输入进行“静默分析”，生成结构化的“心理卡片”。
-                    要求：去聊天化、极简主义、结合 ACT 与 CBT。分析以下生命数据：{full_context}
-                    
-                    输出格式（严禁多余文字）：
-                    ### 🏷️ 智能标签
-                    ### 🧠 思维侦探
-                    ### 🍃 接纳与行动
-                    """
-                    
-                    response = client.chat.completions.create(model="deepseek-chat", messages=[{"role": "user", "content": prompt}])
-                    st.markdown(f'<div class="memo-card">{response.choices[0].message.content}</div>', unsafe_allow_html=True)
-                    
-                    # 循环逻辑：回到开头
-                    if st.button("重新入座 (再次游玩)"):
-                        st.session_state.step = 0
-                        st.session_state.answers = []
-                        st.rerun()
-                except Exception as e:
-                    st.error("引擎暂时休息，请刷新。")
+            except Exception as e:
+                st.error("API Error.")
