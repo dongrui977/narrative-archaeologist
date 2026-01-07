@@ -57,7 +57,7 @@ st.markdown("""
         text-align: center;
     }
 
-    /* 按钮：火漆印感 */
+    /* 按钮样式 */
     .stButton > button {
         background-color: #423629 !important;
         color: #FDFCF0 !important;
@@ -70,12 +70,8 @@ st.markdown("""
         transition: 0.3s;
         box-shadow: 4px 4px 0px #D4A373;
     }
-    .stButton > button:hover {
-        background-color: #D4A373 !important;
-        color: #1A1A1A !important;
-    }
     
-    /* 结果卡片 */
+    /* 结果卡片强制标题样式 */
     .result-card {
         background: white;
         padding: 50px;
@@ -84,9 +80,10 @@ st.markdown("""
         text-align: left;
         line-height: 1.8;
     }
+    /* 强制所有输出标题一致 */
     .result-card h3 {
         font-family: 'Cinzel', serif;
-        font-size: 1.5rem !important; /* 强制统一字号 */
+        font-size: 1.5rem !important;
         font-weight: 600 !important;
         color: #423629 !important;
         margin-top: 25px !important;
@@ -118,13 +115,13 @@ if st.session_state.mode is None:
     
     col1, col2 = st.columns(2)
     with col1:
-        st.markdown('<div class="portal-door"><div style="font-size:3rem; margin-bottom:20px;">🍮</div><h3 style="font-family:Cinzel;">DAILY RELIEF</h3><p style="font-size:0.8rem; opacity:0.7;">日常情绪清理<br>MindMemo 引擎</p></div>', unsafe_allow_html=True)
+        st.markdown('<div class="portal-door"><div style="font-size:3rem; margin-bottom:20px;">🍮</div><h3 style="font-family:Cinzel;">DAILY RELIEF</h3><p style="font-size:0.8rem; opacity:0.7;">日常情绪清理</p></div>', unsafe_allow_html=True)
         if st.button("进入日常门扉"):
             st.session_state.mode = 'daily'
             st.rerun()
 
     with col2:
-        st.markdown('<div class="portal-door"><div style="font-size:3rem; margin-bottom:20px;">🏰</div><h3 style="font-family:Cinzel;">DEEP ARCHIVE</h3><p style="font-size:0.8rem; opacity:0.7;">深度生命考古<br>叙事重构师</p></div>', unsafe_allow_html=True)
+        st.markdown('<div class="portal-door"><div style="font-size:3rem; margin-bottom:20px;">🏰</div><h3 style="font-family:Cinzel;">DEEP ARCHIVE</h3><p style="font-size:0.8rem; opacity:0.7;">深度生命考古</p></div>', unsafe_allow_html=True)
         if st.button("推开档案暗室"):
             st.session_state.mode = 'deep'
             st.rerun()
@@ -134,26 +131,22 @@ elif st.session_state.mode == 'daily':
     st.markdown("<h2 style='text-align:center; font-family:Cinzel;'>MINDMEMO ENGINE</h2>", unsafe_allow_html=True)
     st.markdown('<div class="film-frame"><div class="inner-content"><h4>现在，请倾倒出您此刻堆积的情绪碎片。</h4></div></div>', unsafe_allow_html=True)
     
-    daily_input = st.text_area("", height=200, label_visibility="collapsed", placeholder="引擎正静默等待您的输入...")
+    daily_input = st.text_area("", height=200, label_visibility="collapsed", placeholder="请写下此刻...")
     
     if st.button("执行静默分析"):
         if daily_input:
-            with st.spinner("剥离噪音中..."):
+            with st.spinner("分析中..."):
                 client = OpenAI(api_key=st.secrets["DEEPSEEK_API_KEY"], base_url="https://api.deepseek.com")
-                # 修复了标题对齐和简洁度
                 prompt = (
-                    f"Role: MindMemo引擎\n"
-                    f"要求：专业的心理咨询师，产出口语化有疗愈感。\n"
-                    f"内容：{daily_input}\n"
-                    f"格式：\n"
-                    f"### 🏷️ 智能标签\n(3个关键词)\n\n"
-                    f"### 🧠 思维侦探 (CBT)\n(简短洞察)\n\n"
+                    f"Role: 心理咨询师\n内容：{daily_input}\n"
+                    f"格式：\n### 🏷️ 智能标签\n(2个词)\n\n"
+                    f"### 🧠 思维侦探 (CBT)\n(一句话洞察)\n\n"
                     f"### 🍃 接纳与行动 (ACT)\n(一句话建议)"
                 )
                 response = client.chat.completions.create(model="deepseek-chat", messages=[{"role": "user", "content": prompt}])
                 st.markdown(f'<div class="result-card">{response.choices[0].message.content}</div>', unsafe_allow_html=True)
     
-    if st.button("走出大门，返回城堡入口 🔄"):
+    if st.button("返回城堡入口 🔄"):
         reset_to_hall()
 
 # --- 第三幕：深度考古模式 ---
@@ -180,23 +173,20 @@ elif st.session_state.mode == 'deep':
     else:
         st.markdown("<h2 style='text-align:center; font-family:Cinzel;'>THE FINAL ARCHIVE</h2>", unsafe_allow_html=True)
         if st.button("生成叙事重构报告"):
-            with st.spinner("考古学家正在修复您的生命剧本..."):
+            with st.spinner("考古中..."):
                 client = OpenAI(api_key=st.secrets["DEEPSEEK_API_KEY"], base_url="https://api.deepseek.com")
                 full_data = "\n".join(st.session_state.answers)
-                # 修复了报告的简洁度
                 prompt = (
-                    f"Role: 心理考古师\n"
-                    f"要求：专业的心理咨询师，产出口语化有疗愈感。\n"
-                    f"内容：{full_data}\n"
-                    f"格式：\n"
-                    f"### 📜 叙事重构\n(精简一句话)\n\n"
-                    f"### 🎯 核心图式\n(精简一句话)\n\n"
-                    f"### ⚡ 躯体标记\n(精简一句话)\n\n"
-                    f"### ⚓ 未完情结\n(精简一句话)\n\n"
-                    f"### 🕯️ 觉察时刻\n(精简一句话反思)"
+                    f"Role: 心理考古师\n内容：{full_data}\n"
+                    f"格式要求：\n"
+                    f"### 📜 叙事重构\n(一句话)\n\n"
+                    f"### 🎯 核心图式\n(一句话)\n\n"
+                    f"### ⚡ 躯体标记\n(一句话)\n\n"
+                    f"### ⚓ 未完情结\n(一句话)\n\n"
+                    f"### 🕯️ 觉察时刻\n(一句话)"
                 )
                 response = client.chat.completions.create(model="deepseek-chat", messages=[{"role": "user", "content": prompt}])
                 st.markdown(f'<div class="result-card">{response.choices[0].message.content}</div>', unsafe_allow_html=True)
         
-        if st.button("结束考古，返回城堡入口 🔄"):
+        if st.button("返回城堡入口 🔄"):
             reset_to_hall()
