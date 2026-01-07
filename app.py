@@ -86,11 +86,16 @@ st.markdown("""
     }
     .result-card h3 {
         font-family: 'Cinzel', serif;
-        font-size: 1.2rem !important;
-        color: #423629;
-        border-bottom: 1px solid #eee;
-        padding-bottom: 8px;
+        font-size: 1.5rem !important; /* 强制统一字号 */
+        font-weight: 600 !important;
+        color: #423629 !important;
         margin-top: 25px !important;
+        margin-bottom: 15px !important;
+        border-bottom: 1px solid #EEE;
+        padding-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
     }
     </style>
     """, unsafe_allow_html=True)
