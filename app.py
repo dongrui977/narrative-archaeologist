@@ -155,7 +155,12 @@ elif st.session_state.mode == 'daily':
         if daily_input:
             with st.spinner("剥离噪音中..."):
                 client = OpenAI(api_key=st.secrets["DEEPSEEK_API_KEY"], base_url="https://api.deepseek.com")
-                prompt = f"# Role: MindMemo引擎\\n内容：{daily_input}\\n格式：### 🏷️ 智能标签\\n### 🧠 思维侦探 (CBT)\\n### 🍃 接纳与行动 (ACT)"
+                prompt = (
+    f"# Role: MindMemo引擎\n"
+    f"要求：极其简短，去聊天化，每项分析不超过30字。\n"
+    f"内容：{daily_input}\n"
+    f"格式：\n### 🏷️ 智能标签\n### 🧠 思维侦探 (CBT)\n### 🍃 接纳与行动 (ACT)"
+)
                 response = client.chat.completions.create(model="deepseek-chat", messages=[{"role": "user", "content": prompt}])
                 st.markdown(f'<div class="result-card">{response.choices[0].message.content}</div>', unsafe_allow_html=True)
     
