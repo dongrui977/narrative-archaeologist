@@ -1,18 +1,17 @@
 import streamlit as st
 from openai import OpenAI
 
-# 1. 视觉黑科技：韦斯安德森对称美学 + 3D 景深层次
+# 1. 视觉配置：韦斯安德森对称美学 + 3D 景深层次
 st.set_page_config(page_title="The Soul Palace", layout="centered")
 
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=ZCOOL+XiaoWei&family=Noto+Serif+SC:wght@200;500&display=swap');
 
-    /* 城堡全景：极具质感的复古画卷 */
+    /* 城堡全景：质感复古背景 */
     .stApp {
         background: #E6E1D6;
-        background-image: 
-            linear-gradient(rgba(230,225,214,0.8), rgba(230,225,214,0.8)),
+        background-image: linear-gradient(rgba(230,225,214,0.8), rgba(230,225,214,0.8)),
             url("https://www.transparenttextures.com/patterns/handmade-paper.png");
         color: #423629;
         font-family: 'Noto Serif SC', serif;
@@ -20,21 +19,12 @@ st.markdown("""
 
     header, footer, #MainMenu {visibility: hidden;}
 
-    /* 电影分镜入口 */
-    .portal-stage {
-        display: flex;
-        justify-content: center;
-        gap: 30px;
-        margin-top: 50px;
-        perspective: 1000px;
-    }
-
+    /* 首页入口 */
     .portal-door {
         background: #FDFCF0;
         border: 2px solid #423629;
         padding: 50px 30px;
         text-align: center;
-        width: 300px;
         box-shadow: 15px 15px 0px #423629;
         transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
@@ -67,7 +57,7 @@ st.markdown("""
         text-align: center;
     }
 
-    /* 高级按钮：火漆印感 */
+    /* 按钮：火漆印感 */
     .stButton > button {
         background-color: #423629 !important;
         color: #FDFCF0 !important;
@@ -85,28 +75,30 @@ st.markdown("""
         color: #1A1A1A !important;
     }
     
-    /* 圣光结果卡片 */
+    /* 结果卡片 */
     .result-card {
         background: white;
         padding: 50px;
         border: 1px solid #D4A373;
         box-shadow: 0 0 50px rgba(212, 163, 115, 0.3);
-        animation: divineEntrance 1s ease-out;
+        text-align: left;
+        line-height: 1.8;
     }
-    @keyframes divineEntrance {
-        from { opacity: 0; transform: translateY(30px); }
-        to { opacity: 1; transform: translateY(0); }
+    .result-card h3 {
+        font-family: 'Cinzel', serif;
+        font-size: 1.2rem !important;
+        color: #423629;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 8px;
+        margin-top: 25px !important;
     }
     </style>
     """, unsafe_allow_html=True)
 
-# 2. 状态逻辑：全量重置循环
-if 'mode' not in st.session_state:
-    st.session_state.mode = None
-if 'step' not in st.session_state:
-    st.session_state.step = 0
-if 'answers' not in st.session_state:
-    st.session_state.answers = []
+# 2. 状态逻辑
+if 'mode' not in st.session_state: st.session_state.mode = None
+if 'step' not in st.session_state: st.session_state.step = 0
+if 'answers' not in st.session_state: st.session_state.answers = []
 
 def reset_to_hall():
     st.session_state.mode = None
@@ -121,25 +113,13 @@ if st.session_state.mode is None:
     
     col1, col2 = st.columns(2)
     with col1:
-        st.markdown('''
-            <div class="portal-door">
-                <div style="font-size:3rem; margin-bottom:20px;">🍮</div>
-                <h3 style="font-family:Cinzel;">DAILY RELIEF</h3>
-                <p style="font-size:0.8rem; opacity:0.7;">日常情绪清理<br>MindMemo 引擎</p>
-            </div>
-        ''', unsafe_allow_html=True)
+        st.markdown('<div class="portal-door"><div style="font-size:3rem; margin-bottom:20px;">🍮</div><h3 style="font-family:Cinzel;">DAILY RELIEF</h3><p style="font-size:0.8rem; opacity:0.7;">日常情绪清理<br>MindMemo 引擎</p></div>', unsafe_allow_html=True)
         if st.button("进入日常门扉"):
             st.session_state.mode = 'daily'
             st.rerun()
 
     with col2:
-        st.markdown('''
-            <div class="portal-door">
-                <div style="font-size:3rem; margin-bottom:20px;">🏰</div>
-                <h3 style="font-family:Cinzel;">DEEP ARCHIVE</h3>
-                <p style="font-size:0.8rem; opacity:0.7;">深度生命考古<br>叙事重构师</p>
-            </div>
-        ''', unsafe_allow_html=True)
+        st.markdown('<div class="portal-door"><div style="font-size:3rem; margin-bottom:20px;">🏰</div><h3 style="font-family:Cinzel;">DEEP ARCHIVE</h3><p style="font-size:0.8rem; opacity:0.7;">深度生命考古<br>叙事重构师</p></div>', unsafe_allow_html=True)
         if st.button("推开档案暗室"):
             st.session_state.mode = 'deep'
             st.rerun()
@@ -155,18 +135,16 @@ elif st.session_state.mode == 'daily':
         if daily_input:
             with st.spinner("剥离噪音中..."):
                 client = OpenAI(api_key=st.secrets["DEEPSEEK_API_KEY"], base_url="https://api.deepseek.com")
-        prompt = (
-    f"Role: MindMemo引擎\n"
-    f"要求：专业心理咨询师的口吻，提出有效建议。\n"
-    f"内容：{daily_input}\n"
-    f"格式：\n"
-    f"### 🏷️ 智能标签\n"
-    f"(2个标签)\n\n"
-    f"### 🧠 思维侦探 (CBT)\n"
-    f"(一句话洞察)\n\n"
-    f"### 🍃 接纳与行动 (ACT)\n"
-    f"(一句话建议)"
-)
+                # 修复了标题对齐和简洁度
+                prompt = (
+                    f"Role: MindMemo引擎\n"
+                    f"要求：去聊天化，极其简短。每个模块仅限一句话洞察。\n"
+                    f"内容：{daily_input}\n"
+                    f"格式：\n"
+                    f"### 🏷️ 智能标签\n(2个关键词)\n\n"
+                    f"### 🧠 思维侦探 (CBT)\n(简短洞察)\n\n"
+                    f"### 🍃 接纳与行动 (ACT)\n(一句话建议)"
+                )
                 response = client.chat.completions.create(model="deepseek-chat", messages=[{"role": "user", "content": prompt}])
                 st.markdown(f'<div class="result-card">{response.choices[0].message.content}</div>', unsafe_allow_html=True)
     
@@ -199,18 +177,19 @@ elif st.session_state.mode == 'deep':
         if st.button("生成叙事重构报告"):
             with st.spinner("考古学家正在修复您的生命剧本..."):
                 client = OpenAI(api_key=st.secrets["DEEPSEEK_API_KEY"], base_url="https://api.deepseek.com")
-                full_data = "\\n".join(st.session_state.answers)
+                full_data = "\n".join(st.session_state.answers)
+                # 修复了报告的简洁度
                 prompt = (
-    f"Role: 心理考古师\n"
-    f"要求：专业心理咨询师的口吻给出有效建议。\n"
-    f"数据：{' '.join(st.session_state.answers)}\n"
-    f"格式：\n"
-    f"### 📜 叙事重构\n(一句话)\n\n"
-    f"### 🎯 核心图式\n(一句话)\n\n"
-    f"### ⚡ 躯体标记\n(一句话)\n\n"
-    f"### ⚓ 未完情结\n(一句话)\n\n"
-    f"### 🕯️ 觉察时刻\n(一句话反思)"
-)
+                    f"Role: 心理考古师\n"
+                    f"要求：去聊天化，冷峻深刻。每个维度仅输出一句话精髓。\n"
+                    f"内容：{full_data}\n"
+                    f"格式：\n"
+                    f"### 📜 叙事重构\n(精简一句话)\n\n"
+                    f"### 🎯 核心图式\n(精简一句话)\n\n"
+                    f"### ⚡ 躯体标记\n(精简一句话)\n\n"
+                    f"### ⚓ 未完情结\n(精简一句话)\n\n"
+                    f"### 🕯️ 觉察时刻\n(精简一句话反思)"
+                )
                 response = client.chat.completions.create(model="deepseek-chat", messages=[{"role": "user", "content": prompt}])
                 st.markdown(f'<div class="result-card">{response.choices[0].message.content}</div>', unsafe_allow_html=True)
         
