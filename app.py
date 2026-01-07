@@ -194,7 +194,12 @@ elif st.session_state.mode == 'deep':
             with st.spinner("考古学家正在修复您的生命剧本..."):
                 client = OpenAI(api_key=st.secrets["DEEPSEEK_API_KEY"], base_url="https://api.deepseek.com")
                 full_data = "\\n".join(st.session_state.answers)
-                prompt = f"# Role: 心理叙事重构师\\n内容：{full_data}\\n格式：1.【叙事重构】2.【核心图式】3.【躯体化标记】4.【未完成的情结】5.【觉察时刻】"
+                prompt = (
+    f"# Role: 心理叙事重构师\n"
+    f"要求：去聊天化，冷峻深刻。每个维度仅输出一句话精髓，严禁废话。\n"
+    f"内容：{full_data}\n"
+    f"格式：\n1.【叙事重构】\n2.【核心图式】\n3.【躯体化标记】\n4.【未完成的情结】\n5.【觉察时刻】"
+)
                 response = client.chat.completions.create(model="deepseek-chat", messages=[{"role": "user", "content": prompt}])
                 st.markdown(f'<div class="result-card">{response.choices[0].message.content}</div>', unsafe_allow_html=True)
         
