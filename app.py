@@ -160,7 +160,6 @@ if st.session_state.mode is None:
 
 # --- 模式 A：日常情绪 (专业咨询师视角) ---
 elif st.session_state.mode == 'daily':
-    st.markdown('<div class="golden-frame">', unsafe_allow_html=True)
     st.markdown("<h3 style='text-align:center; font-family:Cinzel Decorative; letter-spacing:4px;'>DAILY CLINIC</h3>", unsafe_allow_html=True)
     u_input = st.text_area("", height=200, label_visibility="collapsed", placeholder="请在此处倾诉，无需顾虑逻辑...")
     
