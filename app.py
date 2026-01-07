@@ -1,14 +1,14 @@
 import streamlit as st
 from openai import OpenAI
 
-# 1. 视觉配置：韦斯安德森对称美学 + 3D 景深
+# 1. 视觉配置：韦斯安德森对称美学 + 3D 景深层次
 st.set_page_config(page_title="The Soul Palace", layout="centered")
 
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=ZCOOL+XiaoWei&family=Noto+Serif+SC:wght@200;500&display=swap');
 
-    /* 城堡全景背景 */
+    /* 城堡全景：质感复古背景 */
     .stApp {
         background: #E6E1D6;
         background-image: linear-gradient(rgba(230,225,214,0.8), rgba(230,225,214,0.8)),
@@ -57,7 +57,7 @@ st.markdown("""
         text-align: center;
     }
 
-    /* 按钮样式 */
+    /* 按钮：火漆印感 */
     .stButton > button {
         background-color: #423629 !important;
         color: #FDFCF0 !important;
@@ -75,7 +75,7 @@ st.markdown("""
         color: #1A1A1A !important;
     }
     
-    /* 核心修复：结果卡片标题一致性 */
+    /* 结果卡片 */
     .result-card {
         background: white;
         padding: 50px;
@@ -84,19 +84,13 @@ st.markdown("""
         text-align: left;
         line-height: 1.8;
     }
-
-    /* 强制三个标题字号、样式完全一致 */
     .result-card h3 {
-        font-size: 1.5rem !important;
-        font-weight: 600 !important;
-        color: #423629 !important;
-        margin-top: 25px !important;
-        margin-bottom: 15px !important;
-        border-bottom: 1px solid #EEE;
+        font-family: 'Cinzel', serif;
+        font-size: 1.2rem !important;
+        color: #423629;
+        border-bottom: 1px solid #eee;
         padding-bottom: 8px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
+        margin-top: 25px !important;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -119,13 +113,13 @@ if st.session_state.mode is None:
     
     col1, col2 = st.columns(2)
     with col1:
-        st.markdown('<div class="portal-door"><div style="font-size:3rem; margin-bottom:20px;">🍮</div><h3 style="font-family:Cinzel;">DAILY RELIEF</h3><p style="font-size:0.8rem; opacity:0.7;">日常情绪清理</p></div>', unsafe_allow_html=True)
+        st.markdown('<div class="portal-door"><div style="font-size:3rem; margin-bottom:20px;">🍮</div><h3 style="font-family:Cinzel;">DAILY RELIEF</h3><p style="font-size:0.8rem; opacity:0.7;">日常情绪清理<br>MindMemo 引擎</p></div>', unsafe_allow_html=True)
         if st.button("进入日常门扉"):
             st.session_state.mode = 'daily'
             st.rerun()
 
     with col2:
-        st.markdown('<div class="portal-door"><div style="font-size:3rem; margin-bottom:20px;">🏰</div><h3 style="font-family:Cinzel;">DEEP ARCHIVE</h3><p style="font-size:0.8rem; opacity:0.7;">深度生命考古</p></div>', unsafe_allow_html=True)
+        st.markdown('<div class="portal-door"><div style="font-size:3rem; margin-bottom:20px;">🏰</div><h3 style="font-family:Cinzel;">DEEP ARCHIVE</h3><p style="font-size:0.8rem; opacity:0.7;">深度生命考古<br>叙事重构师</p></div>', unsafe_allow_html=True)
         if st.button("推开档案暗室"):
             st.session_state.mode = 'deep'
             st.rerun()
@@ -133,40 +127,38 @@ if st.session_state.mode is None:
 # --- 第二幕：日常处理模式 ---
 elif st.session_state.mode == 'daily':
     st.markdown("<h2 style='text-align:center; font-family:Cinzel;'>MINDMEMO ENGINE</h2>", unsafe_allow_html=True)
-    st.markdown('<div class="film-frame"><div class="inner-content"><h4>请倾倒出您此刻堆积的情绪碎片。</h4></div></div>', unsafe_allow_html=True)
+    st.markdown('<div class="film-frame"><div class="inner-content"><h4>现在，请倾倒出您此刻堆积的情绪碎片。</h4></div></div>', unsafe_allow_html=True)
     
     daily_input = st.text_area("", height=200, label_visibility="collapsed", placeholder="引擎正静默等待您的输入...")
     
     if st.button("执行静默分析"):
         if daily_input:
             with st.spinner("剥离噪音中..."):
-                try:
-                    client = OpenAI(api_key=st.secrets["DEEPSEEK_API_KEY"], base_url="https://api.deepseek.com")
-                    # 提示词优化：强制三段式输出并确保 ### 后有空格
-                    prompt = (
-                        f"你是一个名为MindMemo的心理引擎。分析以下内容，极简输出，每项限一句话。\n"
-                        f"内容：{daily_input}\n"
-                        f"必须严格按此Markdown格式输出：\n"
-                        f"### 🏷️ 智能标签\n(2个标签)\n\n"
-                        f"### 🧠 思维侦探 (CBT)\n(简短分析)\n\n"
-                        f"### 🍃 接纳与行动 (ACT)\n(一句建议)"
-                    )
-                    response = client.chat.completions.create(model="deepseek-chat", messages=[{"role": "user", "content": prompt}])
-                    st.markdown(f'<div class="result-card">{response.choices[0].message.content}</div>', unsafe_allow_html=True)
-                except Exception as e:
-                    st.error(f"API连接失败: {str(e)}")
+                client = OpenAI(api_key=st.secrets["DEEPSEEK_API_KEY"], base_url="https://api.deepseek.com")
+                # 修复了标题对齐和简洁度
+                prompt = (
+                    f"Role: MindMemo引擎\n"
+                    f"要求：去聊天化，极其简短。每个模块仅限一句话洞察。\n"
+                    f"内容：{daily_input}\n"
+                    f"格式：\n"
+                    f"### 🏷️ 智能标签\n(2个关键词)\n\n"
+                    f"### 🧠 思维侦探 (CBT)\n(简短洞察)\n\n"
+                    f"### 🍃 接纳与行动 (ACT)\n(一句话建议)"
+                )
+                response = client.chat.completions.create(model="deepseek-chat", messages=[{"role": "user", "content": prompt}])
+                st.markdown(f'<div class="result-card">{response.choices[0].message.content}</div>', unsafe_allow_html=True)
     
-    if st.button("退出并返回大厅 🔄"):
+    if st.button("走出大门，返回城堡入口 🔄"):
         reset_to_hall()
 
 # --- 第三幕：深度考古模式 ---
 elif st.session_state.mode == 'deep':
     rooms = [
-        {"icon": "🌱", "title": "原生底色", "q": "原生底色：出生在哪里？童年记忆中最深刻的一个画面？"},
-        {"icon": "✨", "title": "高光至暗", "q": "高光与至暗：哪一刻觉得自己是世界中心？哪一刻感到彻底绝望？"},
+        {"icon": "🌱", "title": "原生底色", "q": "原生底色：出生在哪里？童年记忆中最深刻的一个画面是什么？"},
+        {"icon": "✨", "title": "高光至暗", "q": "高光与至暗：哪一刻让你觉得自己是世界的中心？哪一刻感到彻底绝望？"},
         {"icon": "💊", "title": "身体记号", "q": "身体记号：你的身体生过什么病？压力大时哪里先报警？"},
         {"icon": "🤝", "title": "重要他人", "q": "关键关系人：谁是你生命中爱恨交织的“重要他人”？"},
-        {"icon": "🔀", "title": "转折执念", "q": "转折与执念：你发誓不想重复却一直在重复的模式？"}
+        {"icon": "🔀", "title": "转折执念", "q": "转折与执念：你发誓不想重复却一直在重复的模式是什么？"}
     ]
 
     if st.session_state.step < len(rooms):
@@ -184,23 +176,22 @@ elif st.session_state.mode == 'deep':
         st.markdown("<h2 style='text-align:center; font-family:Cinzel;'>THE FINAL ARCHIVE</h2>", unsafe_allow_html=True)
         if st.button("生成叙事重构报告"):
             with st.spinner("考古学家正在修复您的生命剧本..."):
-                try:
-                    client = OpenAI(api_key=st.secrets["DEEPSEEK_API_KEY"], base_url="https://api.deepseek.com")
-                    full_data = "\\n".join(st.session_state.answers)
-                    prompt = (
-                        f"你是一个心理考古师。全量分析以下数据，冷峻深刻，极简输出。\n"
-                        f"数据：{full_data}\n"
-                        f"必须严格按此Markdown格式输出：\n"
-                        f"### 📜 叙事重构\n(一句话)\n\n"
-                        f"### 🎯 核心图式\n(一句话)\n\n"
-                        f"### ⚡ 躯体标记\n(一句话)\n\n"
-                        f"### ⚓ 未完情结\n(一句话)\n\n"
-                        f"### 🕯️ 觉察时刻\n(一句话反思)"
-                    )
-                    response = client.chat.completions.create(model="deepseek-chat", messages=[{"role": "user", "content": prompt}])
-                    st.markdown(f'<div class="result-card">{response.choices[0].message.content}</div>', unsafe_allow_html=True)
-                except Exception as e:
-                    st.error(f"API连接失败: {str(e)}")
+                client = OpenAI(api_key=st.secrets["DEEPSEEK_API_KEY"], base_url="https://api.deepseek.com")
+                full_data = "\n".join(st.session_state.answers)
+                # 修复了报告的简洁度
+                prompt = (
+                    f"Role: 心理考古师\n"
+                    f"要求：去聊天化，冷峻深刻。每个维度仅输出一句话精髓。\n"
+                    f"内容：{full_data}\n"
+                    f"格式：\n"
+                    f"### 📜 叙事重构\n(精简一句话)\n\n"
+                    f"### 🎯 核心图式\n(精简一句话)\n\n"
+                    f"### ⚡ 躯体标记\n(精简一句话)\n\n"
+                    f"### ⚓ 未完情结\n(精简一句话)\n\n"
+                    f"### 🕯️ 觉察时刻\n(精简一句话反思)"
+                )
+                response = client.chat.completions.create(model="deepseek-chat", messages=[{"role": "user", "content": prompt}])
+                st.markdown(f'<div class="result-card">{response.choices[0].message.content}</div>', unsafe_allow_html=True)
         
-        if st.button("结束考古并返回大厅 🔄"):
+        if st.button("结束考古，返回城堡入口 🔄"):
             reset_to_hall()
