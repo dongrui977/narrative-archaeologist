@@ -53,6 +53,7 @@ st.markdown("""
     
     @keyframes curio-float {
         0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.8; }
+        50% { transform: translateY(-20px) rotate(8deg); opacity: 1; }
     }
 
     .curio:nth-child(2) { animation-delay: 0.5s; }
