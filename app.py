@@ -121,13 +121,25 @@ if st.session_state.mode is None:
     
     col1, col2 = st.columns(2)
     with col1:
-        st.markdown('<div class="portal-door"><div style="font-size:3rem; margin-bottom:20px;">🍮</div><h3 style="font-family:Cinzel;">DAILY RELIEF</h3><p style="font-size:0.8rem; opacity:0.7;">日常情绪清理</p></div>', unsafe_allow_html=True)
+        st.markdown('''
+            <div class="portal-door">
+                <div style="font-size:3rem; margin-bottom:20px;">🍮</div>
+                <h3 style="font-family:Cinzel;">DAILY RELIEF</h3>
+                <p style="font-size:0.8rem; opacity:0.7;">日常情绪清理<br>MindMemo 引擎</p>
+            </div>
+        ''', unsafe_allow_html=True)
         if st.button("进入日常门扉"):
             st.session_state.mode = 'daily'
             st.rerun()
 
     with col2:
-        st.markdown('<div class="portal-door"><div style="font-size:3rem; margin-bottom:20px;">🏰</div><h3 style="font-family:Cinzel;">DEEP ARCHIVE</h3><p style="font-size:0.8rem; opacity:0.7;">深度生命考古</p></div>', unsafe_allow_html=True)
+        st.markdown('''
+            <div class="portal-door">
+                <div style="font-size:3rem; margin-bottom:20px;">🏰</div>
+                <h3 style="font-family:Cinzel;">DEEP ARCHIVE</h3>
+                <p style="font-size:0.8rem; opacity:0.7;">深度生命考古<br>叙事重构师</p>
+            </div>
+        ''', unsafe_allow_html=True)
         if st.button("推开档案暗室"):
             st.session_state.mode = 'deep'
             st.rerun()
