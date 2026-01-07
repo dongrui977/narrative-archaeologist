@@ -123,7 +123,7 @@ if st.session_state.mode is None:
     with col1:
         st.markdown('''
             <div class="portal-door">
-                <div style="font-size:3rem; margin-bottom:20px;">🍮</div>
+                <div style="font-size:3rem; margin-bottom:20px;">🍰</div>
                 <h3 style="font-family:Cinzel;">DAILY RELIEF</h3>
                 <p style="font-size:0.8rem; opacity:0.7;">日常情绪清理<br>MindMemo 引擎</p>
             </div>
