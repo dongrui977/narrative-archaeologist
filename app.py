@@ -201,10 +201,15 @@ elif st.session_state.mode == 'deep':
                 client = OpenAI(api_key=st.secrets["DEEPSEEK_API_KEY"], base_url="https://api.deepseek.com")
                 full_data = "\\n".join(st.session_state.answers)
                 prompt = (
-    f"# Role: 心理叙事重构师\n"
-    f"要求：以专业心理咨询师的口吻。每个维度仅输出一句话精髓，要书面语简单易懂，严禁废话。\n"
-    f"内容：{full_data}\n"
-    f"格式：\n1.【叙事重构】\n2.【核心图式】\n3.【躯体化标记】\n4.【未完成的情结】\n5.【觉察时刻】"
+    f"Role: 心理考古师\n"
+    f"要求：专业心理咨询师的口吻给出有效建议。\n"
+    f"数据：{' '.join(st.session_state.answers)}\n"
+    f"格式：\n"
+    f"### 📜 叙事重构\n(一句话)\n\n"
+    f"### 🎯 核心图式\n(一句话)\n\n"
+    f"### ⚡ 躯体标记\n(一句话)\n\n"
+    f"### ⚓ 未完情结\n(一句话)\n\n"
+    f"### 🕯️ 觉察时刻\n(一句话反思)"
 )
                 response = client.chat.completions.create(model="deepseek-chat", messages=[{"role": "user", "content": prompt}])
                 st.markdown(f'<div class="result-card">{response.choices[0].message.content}</div>', unsafe_allow_html=True)
