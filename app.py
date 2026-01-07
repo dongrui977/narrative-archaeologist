@@ -1,180 +1,176 @@
 import streamlit as st
 from openai import OpenAI
 
-# 1. 视觉工程：Tiffany 蓝 + 极简高级感
-st.set_page_config(page_title="MindMemo | Tiffany Edition", layout="centered")
+# 1. 视觉黑科技：韦斯·安德森色调 + 3D 拟物化
+st.set_page_config(page_title="MindMemo | 灵魂扭蛋机", layout="centered")
 
 st.markdown("""
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@200;500&family=Cinzel&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=ZCOOL+XiaoWei&display=swap');
 
-    /* 全局背景：Tiffany 经典色 */
+    /* 全局背景：复古薄荷绿与奶油粉 */
     .stApp {
-        background-color: #81D8D0;
-        background-image: linear-gradient(135deg, #81D8D0 0%, #AEE6E1 100%);
-        color: #333;
-        font-family: 'Noto Serif SC', serif;
+        background: #F4EAE0;
+        background-image: radial-gradient(#D4A373 1px, transparent 1px);
+        background-size: 30px 30px;
+        color: #6B705C;
     }
 
     header, footer, #MainMenu {visibility: hidden;}
 
-    /* 高级白盒容器 */
-    .tiffany-container {
-        background: rgba(255, 255, 255, 0.95);
-        border-radius: 2px; /* 珠宝盒通常是方正的 */
-        padding: 60px 40px;
-        box-shadow: 0 40px 100px rgba(0,0,0,0.1);
+    /* 3D 扭蛋球样式 */
+    .gacha-ball {
+        width: 120px;
+        height: 120px;
+        background: linear-gradient(135deg, #FFB5A7 0%, #FF8FAB 100%);
+        border-radius: 50%;
+        margin: 40px auto;
+        box-shadow: inset -10px -10px 20px rgba(0,0,0,0.1), 10px 20px 30px rgba(255, 143, 171, 0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        animation: bob 3s ease-in-out infinite;
+    }
+
+    @keyframes bob {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-20px); }
+    }
+
+    /* 复古电影感容器 */
+    .machine-case {
+        background: #FFFFFF;
+        border: 8px solid #FFB5A7;
+        border-radius: 40px;
+        padding: 50px 30px;
+        box-shadow: 0 30px 0px #F6BD60;
         text-align: center;
-        margin-top: 50px;
-        border: 1px solid rgba(255, 255, 255, 0.3);
     }
 
-    .tiffany-label {
-        font-family: 'Cinzel', serif;
-        font-size: 0.8rem;
-        letter-spacing: 5px;
-        color: #81D8D0;
-        margin-bottom: 20px;
-        font-weight: bold;
-    }
-
-    .tiffany-title {
-        font-size: 1.8rem;
-        font-weight: 200;
-        color: #1a1a1a;
-        margin-bottom: 40px;
+    .step-title {
+        font-family: 'ZCOOL XiaoWei', serif;
+        font-size: 2rem;
+        color: #E76F51;
         letter-spacing: 2px;
+        margin-bottom: 20px;
     }
 
-    /* 输入框：极细线条 */
+    /* 输入框：干净的高级感 */
     .stTextArea textarea {
-        background-color: transparent !important;
-        border: none !important;
-        border-bottom: 1px solid #eee !important;
-        color: #1a1a1a !important;
+        background-color: #FDFCF0 !important;
+        border: 2px solid #FFB5A7 !important;
+        border-radius: 20px !important;
+        color: #6B705C !important;
         font-size: 1.1rem !important;
-        border-radius: 0 !important;
-        padding: 20px 0 !important;
-    }
-    .stTextArea textarea:focus {
-        border-bottom: 1px solid #81D8D0 !important;
-        box-shadow: none !important;
+        padding: 20px !important;
     }
 
-    /* 按钮：深蓝色绸缎感 */
+    /* 按钮：像投币口的按钮 */
     .stButton > button {
-        background-color: #1a1a1a !important;
+        background-color: #E76F51 !important;
         color: white !important;
         border: none !important;
-        border-radius: 0px !important;
-        padding: 12px 60px !important;
-        font-size: 0.8rem !important;
-        letter-spacing: 4px;
-        transition: 0.5s;
-        margin-top: 30px;
+        border-radius: 15px !important;
+        padding: 15px 50px !important;
+        font-weight: bold !important;
+        box-shadow: 0 8px 0px #A24936;
+        transition: 0.1s;
     }
-    .stButton > button:hover {
-        background-color: #333 !important;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.2) !important;
+    .stButton > button:active {
+        transform: translateY(4px);
+        box-shadow: 0 4px 0px #A24936;
     }
 
-    /* 圣光珠宝卡片 */
-    .jewelry-card {
-        background: white;
-        padding: 50px;
-        border: 1px solid #eee;
-        text-align: left;
+    /* 圣光闪烁卡片：像刚抽出来的手办卡 */
+    .soul-card {
+        background: #FFFFFF;
+        border: 2px solid #E76F51;
+        padding: 40px;
+        border-radius: 20px;
         position: relative;
-        animation: moonGlow 3s infinite alternate;
-    }
-    @keyframes moonGlow {
-        from { box-shadow: 0 0 20px rgba(255,255,255,0.5); }
-        to { box-shadow: 0 0 50px rgba(129, 216, 208, 0.4); }
+        animation: sparkleGlow 2s infinite alternate;
     }
 
-    .jewelry-card h3 {
-        font-family: 'Cinzel', serif;
-        font-size: 1rem;
-        color: #81D8D0;
-        border-bottom: 1px solid #eee;
-        padding-bottom: 10px;
-        margin-top: 25px !important;
+    @keyframes sparkleGlow {
+        from { box-shadow: 0 0 10px rgba(231, 111, 81, 0.2); }
+        to { box-shadow: 0 0 40px rgba(231, 111, 81, 0.6), 0 0 20px rgba(246, 189, 96, 0.4); }
     }
     </style>
     """, unsafe_allow_html=True)
 
-# 2. 会话管理
+# 2. 会话状态
 if 'step' not in st.session_state:
     st.session_state.step = 0
 if 'answers' not in st.session_state:
     st.session_state.answers = []
 
 scenes = [
-    {"label": "01 THE ORIGIN", "title": "🌱 原生底色"},
-    {"label": "02 THE LIGHT", "title": "✨ 闪光时刻"},
-    {"label": "03 THE SHADOW", "title": "🌑 至暗瞬间"},
-    {"label": "04 THE ECHO", "title": "🌡️ 身体警报"},
-    {"label": "05 THE CONNECTION", "title": "🤝 重要他人"},
-    {"label": "06 THE REPETITION", "title": "🌀 循环怪圈"}
+    {"icon": "🥚", "title": "原生底色", "q": "你的童年记忆里，哪一个瞬间像还没打开的彩蛋？"},
+    {"icon": "✨", "title": "闪光碎片", "q": "哪一次成就感，让你觉得自己全身涂满了亮粉？"},
+    {"icon": "🏚️", "title": "至暗角落", "q": "哪一段经历，像掉漆的零件一样让你想藏起来？"},
+    {"icon": "⚡", "title": "身体电流", "q": "压力大时，身体哪个部位在闪烁预警？"},
+    {"icon": "🎎", "title": "重要镜像", "q": "谁是那个深刻影响你，让你又爱又怕的‘限定款’？"},
+    {"icon": "♾️", "title": "循环脚本", "q": "有什么不爽的套路，是你一直在‘复读’运行的？"}
 ]
 
-# 3. 逻辑渲染
+# 3. 游戏化流程
 if st.session_state.step < len(scenes):
     s = scenes[st.session_state.step]
     
     st.markdown(f'''
-        <div class="tiffany-container">
-            <div class="tiffany-label">{s['label']}</div>
-            <div class="tiffany-title">{s['title']}</div>
-            <p style="color: #999; font-size: 0.9rem;">第 {st.session_state.step + 1} 帧 / 共 6 帧</p>
+        <div class="machine-case">
+            <div class="gacha-ball">{s['icon']}</div>
+            <div class="step-title">{s['title']}</div>
+            <p style="opacity:0.6;">INSERT COIN FOR SCENE 0{st.session_state.step + 1}</p>
+            <h3 style="margin: 20px 0;">{s['q']}</h3>
         </div>
     ''', unsafe_allow_html=True)
     
-    ans = st.text_area("", key=f"ans_{st.session_state.step}", height=180, label_visibility="collapsed", placeholder="记录您的真实叙事...")
+    ans = st.text_area("", key=f"gacha_{st.session_state.step}", height=120, label_visibility="collapsed", placeholder="请投入您的记忆硬币...")
     
-    col1, col2, col3 = st.columns([1, 1, 1])
+    col1, col2, col3 = st.columns([1, 1.2, 1])
     with col2:
-        if st.button("PROCEED"):
+        if st.button("扭转旋钮，进入下一关"):
             if ans:
                 st.session_state.answers.append(ans)
                 st.session_state.step += 1
                 st.rerun()
 
 else:
-    st.markdown('<div class="tiffany-title" style="text-align:center; margin-top:100px; color:white;">ARCHIVE COMPLETE</div>', unsafe_allow_html=True)
+    st.markdown('<div class="step-title" style="text-align:center; margin-top:50px;">扭蛋机已停止运行</div>', unsafe_allow_html=True)
     
-    col1, col2, col3 = st.columns([1, 2, 1])
-    with col2:
-        if st.button("OPEN THE BLUE BOX"):
-            with st.spinner(""):
-                try:
-                    client = OpenAI(api_key=st.secrets["DEEPSEEK_API_KEY"], base_url="https://api.deepseek.com")
-                    full_context = "\n".join(st.session_state.answers)
+    if st.button("查看我的灵魂手办卡 🎫"):
+        with st.spinner("正在注塑、喷漆、重构叙事中..."):
+            try:
+                client = OpenAI(api_key=st.secrets["DEEPSEEK_API_KEY"], base_url="https://api.deepseek.com")
+                full_context = "\n".join(st.session_state.answers)
+                
+                # 执行硬核 MindMemo 引擎
+                prompt = f"""
+                你是一个名为 "MindMemo" 的后台分析引擎。
+                任务：根据输入生成一张极其深刻、极简的“灵魂手办卡”。
+                输入：{full_context}
+                格式：
+                ### 🏷️ 灵魂标签
+                ### 🧠 脚本监测 (CBT)
+                ### 🍃 进化指南 (ACT)
+                """
+                
+                response = client.chat.completions.create(model="deepseek-chat", messages=[{"role": "user", "content": prompt}])
+                
+                st.markdown(f'''
+                    <div class="soul-card">
+                        <div style="text-align:center; font-family:ZCOOL XiaoWei; font-size:1.5rem; color:#E76F51; margin-bottom:20px;">📜 灵魂限定档案</div>
+                        {response.choices[0].message.content}
+                    </div>
+                ''', unsafe_allow_html=True)
+                
+                # 循环
+                if st.button("再投一次币 🔄"):
+                    st.session_state.step = 0
+                    st.session_state.answers = []
+                    st.rerun()
                     
-                    prompt = f"""
-                    你是一个名为 "MindMemo" 的心理分析引擎。
-                    任务：生成极其简短深刻的“心理卡片”。
-                    分析视角：ACT + CBT。
-                    输入：{full_context}
-                    格式：
-                    ### 🏷️ 智能标签
-                    ### 🧠 思维侦探 (CBT)
-                    ### 🍃 接纳与行动 (ACT)
-                    """
-                    
-                    response = client.chat.completions.create(model="deepseek-chat", messages=[{"role": "user", "content": prompt}])
-                    
-                    st.markdown(f'''
-                        <div class="jewelry-card">
-                            <div style="text-align:center; font-family:Cinzel; letter-spacing:3px; color:#81D8D0; margin-bottom:20px;">MINDMEMO ARCHIVE</div>
-                            {response.choices[0].message.content}
-                        </div>
-                    ''', unsafe_allow_html=True)
-                    
-                    if st.button("RESTART JOURNEY"):
-                        st.session_state.step = 0
-                        st.session_state.answers = []
-                        st.rerun()
-                        
-                except Exception as e:
-                    st.error("Connection Error.")
+            except Exception as e:
+                st.error("机器卡币了，请刷新重试。")
