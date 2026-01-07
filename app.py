@@ -157,7 +157,7 @@ elif st.session_state.mode == 'daily':
                 client = OpenAI(api_key=st.secrets["DEEPSEEK_API_KEY"], base_url="https://api.deepseek.com")
                 prompt = (
     f"# Role: MindMemo引擎\n"
-    f"要求：极其简短，去聊天化，每项分析不超过30字。\n"
+    f"要求：以专业心理咨询师的口吻，每项分析不超过30字。\n"
     f"内容：{daily_input}\n"
     f"格式：\n### 🏷️ 智能标签\n### 🧠 思维侦探 (CBT)\n### 🍃 接纳与行动 (ACT)"
 )
@@ -196,7 +196,7 @@ elif st.session_state.mode == 'deep':
                 full_data = "\\n".join(st.session_state.answers)
                 prompt = (
     f"# Role: 心理叙事重构师\n"
-    f"要求：去聊天化，冷峻深刻。每个维度仅输出一句话精髓，严禁废话。\n"
+    f"要求：以专业心理咨询师的口吻。每个维度仅输出一句话精髓，要书面语简单易懂，严禁废话。\n"
     f"内容：{full_data}\n"
     f"格式：\n1.【叙事重构】\n2.【核心图式】\n3.【躯体化标记】\n4.【未完成的情结】\n5.【觉察时刻】"
 )
