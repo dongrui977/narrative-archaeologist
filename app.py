@@ -114,18 +114,23 @@ def reset():
     st.session_state.answers = []
     st.rerun()
 
-# --- 首页：命运之门 ---
+# --- 第一幕：城堡入口 ---
 if st.session_state.mode is None:
-    st.markdown("<h1 style='text-align:center; font-family:Cinzel; letter-spacing:15px; margin-top:60px;'>THE PALACE</h1>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align:center; opacity:0.5; letter-spacing:3px; margin-bottom:80px;'>品味生命碎片，或清理当下尘埃</p>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align:center; font-family:Cinzel; letter-spacing:15px; margin-top:50px;'>THE SOUL PALACE</h1>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align:center; letter-spacing:3px; opacity:0.6; margin-bottom:80px;'>品味生命，或清理尘埃</p>", unsafe_allow_html=True)
     
     col1, col2 = st.columns(2)
     with col1:
-        st.markdown('<div class="portal-door"><div style="font-size:2.5rem; margin-bottom:15px;">🩹</div><h3 style="font-family:Cinzel;">DAILY RELIEF</h3><p style="font-size:0.75rem; opacity:0.6;">此刻情绪清理</p></div>', unsafe_allow_html=True)
-        if st.button("进入日常门扉"): st.session_state.mode = 'daily'; st.rerun()
+        st.markdown('<div class="portal-door"><div style="font-size:3rem; margin-bottom:20px;">🍮</div><h3 style="font-family:Cinzel;">DAILY RELIEF</h3><p style="font-size:0.8rem; opacity:0.7;">日常情绪清理</p></div>', unsafe_allow_html=True)
+        if st.button("进入日常门扉"):
+            st.session_state.mode = 'daily'
+            st.rerun()
+
     with col2:
-        st.markdown('<div class="portal-door"><div style="font-size:2.5rem; margin-bottom:15px;">🏺</div><h3 style="font-family:Cinzel;">DEEP ARCHIVE</h3><p style="font-size:0.75rem; opacity:0.6;">生命档案考古</p></div>', unsafe_allow_html=True)
-        if st.button("推开暗室之门"): st.session_state.mode = 'deep'; st.rerun()
+        st.markdown('<div class="portal-door"><div style="font-size:3rem; margin-bottom:20px;">🏰</div><h3 style="font-family:Cinzel;">DEEP ARCHIVE</h3><p style="font-size:0.8rem; opacity:0.7;">深度生命考古</p></div>', unsafe_allow_html=True)
+        if st.button("推开档案暗室"):
+            st.session_state.mode = 'deep'
+            st.rerun()
 
 # --- 模式 A：日常情绪 (MindMemo) ---
 elif st.session_state.mode == 'daily':
