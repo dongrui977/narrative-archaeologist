@@ -1,7 +1,7 @@
 import streamlit as st
 from openai import OpenAI
 
-# 1. 视觉黑科技：Art Deco 风格 + 动态复古橱窗
+# 1. 视觉配置：Art Deco 黄金宫殿 + 紧凑型动态橱窗
 st.set_page_config(page_title="MindMemo | 黄金宫殿", layout="centered")
 
 st.markdown("""
@@ -18,16 +18,16 @@ st.markdown("""
 
     header, footer, #MainMenu {visibility: hidden;}
 
-    /* --- 奇迹橱窗 (有趣且跳动的顶部区域) --- */
+    /* --- 奇迹橱窗：紧凑型顶部区域 --- */
     .wonder-cabinet {
-        height: 150px;
+        height: 120px; /* 进一步缩小高度 */
         width: 100%;
         border: 2px solid #D4AF37;
-        margin-bottom: 30px;
+        margin: 20px 0; /* 调整间距，消除空洞感 */
         position: relative;
         overflow: hidden;
         background: rgba(13, 43, 38, 0.5);
-        box-shadow: inset 0 0 30px rgba(212, 175, 55, 0.3);
+        box-shadow: inset 0 0 20px rgba(212, 175, 55, 0.3);
         display: flex;
         justify-content: space-around;
         align-items: center;
@@ -35,17 +35,16 @@ st.markdown("""
 
     /* 浮动的小物件 */
     .curio {
-        font-size: 2.8rem;
+        font-size: 2.2rem;
         filter: drop-shadow(0 0 8px #D4AF37);
         animation: float-jump 3s infinite ease-in-out;
     }
 
     @keyframes float-jump {
         0%, 100% { transform: translateY(0) rotate(0deg); }
-        50% { transform: translateY(-25px) rotate(10deg); }
+        50% { transform: translateY(-15px) rotate(8deg); }
     }
 
-    /* 差异化动画延迟 */
     .curio:nth-child(1) { animation-delay: 0s; }
     .curio:nth-child(2) { animation-delay: 0.4s; }
     .curio:nth-child(3) { animation-delay: 0.8s; }
@@ -59,21 +58,21 @@ st.markdown("""
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         text-align: center;
-        font-size: 3rem;
-        letter-spacing: 12px;
-        margin-bottom: 40px;
+        font-size: 2.5rem;
+        letter-spacing: 10px;
+        margin-bottom: 20px;
     }
 
     .golden-frame {
         background: #0D2B26;
-        padding: 45px;
-        border: 4px double #D4AF37;
+        padding: 30px;
+        border: 3px double #D4AF37;
         outline: 1px solid #D4AF37;
-        outline-offset: 10px;
-        box-shadow: 0 50px 100px rgba(0,0,0,0.5);
+        outline-offset: 8px;
+        box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+        margin-bottom: 20px;
     }
 
-    /* 按钮：具有物理质感的黄金 */
     .stButton > button {
         background: linear-gradient(135deg, #BF953F, #AA771C) !important;
         color: #0A1F1C !important;
@@ -82,26 +81,31 @@ st.markdown("""
         width: 100%;
         font-family: 'Cinzel Decorative', cursive !important;
         font-weight: 700 !important;
-        letter-spacing: 3px;
-        padding: 12px 0 !important;
+        letter-spacing: 2px;
+        padding: 10px 0 !important;
+        margin-top: 10px;
     }
 
-    /* 最终专业输出卡片 */
+    /* 最终报告卡片：强制字号对齐 */
     .final-card {
         background: #FDFCF0;
         color: #1A1A1A;
-        padding: 45px;
-        border: 15px solid #0D2B26;
+        padding: 35px;
+        border: 12px solid #0D2B26;
         outline: 1px solid #D4AF37;
         line-height: 1.8;
+        margin-top: 20px;
     }
     .final-card h3 {
         font-family: 'Cinzel Decorative', cursive !important;
-        font-size: 1.2rem !important;
+        font-size: 1.1rem !important;
         color: #AA771C !important;
         border-bottom: 2px solid #AA771C !important;
-        padding-bottom: 8px !important;
-        margin-top: 25px !important;
+        padding-bottom: 5px !important;
+        margin-top: 20px !important;
+        display: flex;
+        align-items: center;
+        gap: 10px;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -128,32 +132,38 @@ def reset():
     st.session_state.answers = []
     st.rerun()
 
-# --- 首页 ---
+# --- 第一幕：入口大厅 ---
 if st.session_state.mode is None:
     st.markdown('<h1 class="gold-title">THE PALACE</h1>', unsafe_allow_html=True)
     
     col1, col2 = st.columns(2)
     with col1:
-        st.markdown('<div style="text-align:center; padding:20px; border:1px solid #D4AF37; background:#0D2B26;"><h4 style="font-family:Cinzel Decorative;">DAILY RELIEF</h4><p style="font-size:0.7rem; opacity:0.6; color:#FCF6BA;">日常情绪清理</p></div>', unsafe_allow_html=True)
+        st.markdown('<div style="text-align:center; padding:15px; border:1px solid #D4AF37; background:#0D2B26;"><h4 style="font-family:Cinzel Decorative; font-size:0.9rem;">日常情绪清理</h4><p style="font-size:0.7rem; opacity:0.6; color:#FCF6BA;">MindMemo 引擎</p></div>', unsafe_allow_html=True)
         if st.button("进入日常之门"): st.session_state.mode = 'daily'; st.rerun()
     with col2:
-        st.markdown('<div style="text-align:center; padding:20px; border:1px solid #D4AF37; background:#0D2B26;"><h4 style="font-family:Cinzel Decorative;">DEEP ARCHIVE</h4><p style="font-size:0.7rem; opacity:0.6; color:#FCF6BA;">深度生命考古</p></div>', unsafe_allow_html=True)
-        if st.button("推开档案之门"): st.session_state.mode = 'deep'; st.rerun()
+        st.markdown('<div style="text-align:center; padding:15px; border:1px solid #D4AF37; background:#0D2B26;"><h4 style="font-family:Cinzel Decorative; font-size:0.9rem;">深度生命考古</h4><p style="font-size:0.7rem; opacity:0.6; color:#FCF6BA;">叙事重构师</p></div>', unsafe_allow_html=True)
+        if st.button("推开暗室之门"): st.session_state.mode = 'deep'; st.rerun()
 
-# --- 日常模式 ---
+# --- 模式 A：日常 ---
 elif st.session_state.mode == 'daily':
+    st.markdown('<h2 style="text-align:center; font-family:Cinzel Decorative; font-size:1.2rem; margin-bottom:10px;">DAILY CLINIC</h2>', unsafe_allow_html=True)
     st.markdown('<div class="golden-frame">', unsafe_allow_html=True)
-    u_input = st.text_area("请在此倾诉...", height=180, label_visibility="collapsed")
-    if st.button("生成疗愈建议"):
+    u_input = st.text_area("", height=150, label_visibility="collapsed", placeholder="请向黄金祭坛倾诉此刻的情绪碎片...")
+    
+    if st.button("生成疗愈档案"):
         if u_input:
-            client = OpenAI(api_key=st.secrets["DEEPSEEK_API_KEY"], base_url="https://api.deepseek.com")
-            # 强化专业咨询师语气
-            prompt = f"Role: 资深心理咨询师。语气温柔、极致精简、专业深刻。格式：### 🏷️ 智能标签\\n### 🧠 深度洞察\\n### 🍃 疗愈指引。内容：{u_input}"
-            res = client.chat.completions.create(model="deepseek-chat", messages=[{"role": "user", "content": prompt}])
-            st.markdown(f'<div class="final-card">{res.choices[0].message.content}</div>', unsafe_allow_html=True)
-    if st.button("返回"): reset()
+            with st.spinner(""):
+                client = OpenAI(api_key=st.secrets["DEEPSEEK_API_KEY"], base_url="https://api.deepseek.com")
+                prompt = (
+                    f"Role: 资深心理咨询师。语气温柔、专业且深刻。极致精简，每项限一句话建议。\n内容：{u_input}\n"
+                    f"格式：\n### 🏷️ 智能标签\n### 🧠 深度洞察\n### 🍃 疗愈指引"
+                )
+                res = client.chat.completions.create(model="deepseek-chat", messages=[{"role": "user", "content": prompt}])
+                st.markdown(f'<div class="final-card">{res.choices[0].message.content}</div>', unsafe_allow_html=True)
+    
+    if st.button("返回大厅 🔄"): reset()
 
-# --- 深度模式 ---
+# --- 模式 B：深度 ---
 elif st.session_state.mode == 'deep':
     rooms = [
         {"icon": "🌱", "t": "原生底色", "q": "童年记忆中最深刻的画面？"},
@@ -165,14 +175,19 @@ elif st.session_state.mode == 'deep':
     if st.session_state.step < len(rooms):
         r = rooms[st.session_state.step]
         st.markdown(f'<div class="golden-frame">', unsafe_allow_html=True)
-        st.markdown(f"<div style='text-align:center; font-size:3rem;'>{r['icon']}</div><h3 style='text-align:center;'>{r['t']}</h3>", unsafe_allow_html=True)
-        ans = st.text_area(r['q'], key=f"d_{st.session_state.step}", height=120)
-        if st.button("前进"):
+        st.markdown(f"<p style='text-align:center; font-family:Cinzel Decorative; font-size:0.8rem;'>ROOM 0{st.session_state.step + 1}</p>", unsafe_allow_html=True)
+        st.markdown(f"<div style='text-align:center; font-size:2.5rem;'>{r['icon']}</div><h3 style='text-align:center; font-size:1.1rem; color:#FCF6BA;'>{r['t']}</h3><p style='text-align:center; font-size:0.9rem;'>{r['q']}</p>", unsafe_allow_html=True)
+        ans = st.text_area("", key=f"d_{st.session_state.step}", height=120, label_visibility="collapsed")
+        if st.button("推开下一扇门"):
             if ans: st.session_state.answers.append(ans); st.session_state.step += 1; st.rerun()
     else:
-        if st.button("开启终极简报"):
-            client = OpenAI(api_key=st.secrets["DEEPSEEK_API_KEY"], base_url="https://api.deepseek.com")
-            prompt = f"Role: 心理叙事专家。语气专业、温柔。给出极简、深刻的建议。格式：### 📜 核心剧本\\n### 🕯️ 觉察时刻\\n### 🍃 行动指令。数据：{' '.join(st.session_state.answers)}"
-            res = client.chat.completions.create(model="deepseek-chat", messages=[{"role": "user", "content": prompt}])
-            st.markdown(f'<div class="final-card">{res.choices[0].message.content}</div>', unsafe_allow_html=True)
-        if st.button("离开"): reset()
+        if st.button("开启终极档案报告"):
+            with st.spinner(""):
+                client = OpenAI(api_key=st.secrets["DEEPSEEK_API_KEY"], base_url="https://api.deepseek.com")
+                prompt = (
+                    f"Role: 心理专家。语气温柔专业。给出极简、深刻的一句话建议。\n数据：{' '.join(st.session_state.answers)}\n"
+                    f"格式：\n### 📜 核心剧本\n### 🎯 觉察时刻\n### 🍃 行动建议"
+                )
+                res = client.chat.completions.create(model="deepseek-chat", messages=[{"role": "user", "content": prompt}])
+                st.markdown(f'<div class="final-card">{res.choices[0].message.content}</div>', unsafe_allow_html=True)
+        if st.button("离开宫殿 🔄"): reset()
