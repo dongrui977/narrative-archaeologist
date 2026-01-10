@@ -1,7 +1,7 @@
 import streamlit as st
 from openai import OpenAI
 
-# 1. 视觉黑科技：Art Deco 繁复美学 + 动态居中橱窗
+# --- CONFIG & STYLING (保持不变) ---
 st.set_page_config(page_title="MindMemo | 终极宫殿", layout="centered")
 
 st.markdown("""
@@ -48,7 +48,7 @@ st.markdown("""
         font-size: 2.8rem;
         filter: drop-shadow(0 0 12px #D4AF37);
         animation: curio-float 4s infinite cubic-bezier(0.45, 0.05, 0.55, 0.95);
-        position: relative; /* 脱离绝对定位，交由 Flex 布局 */
+        position: relative; 
     }
     
     @keyframes curio-float {
@@ -114,12 +114,15 @@ st.markdown("""
     }
     .report-card h3 {
         font-family: 'Cinzel Decorative', cursive !important;
-        font-size: 1.2rem !important;
+        font-size: 1.3rem !important;
         color: #8A6E2F !important;
         border-bottom: 2px solid #D4AF37 !important;
         padding-bottom: 10px !important;
-        margin-top: 25px !important;
+        margin-top: 30px !important;
         font-weight: 900 !important;
+    }
+    .report-card strong {
+        color: #8B0000; /* 重点加粗用深绯红，增加戏剧感 */
     }
     </style>
     """, unsafe_allow_html=True)
@@ -158,16 +161,15 @@ if st.session_state.mode is None:
         st.markdown('<div style="text-align:center; padding:25px; border:1px solid #D4AF37; background:#0D2B26;"><h4 style="font-family:Cinzel Decorative;">DEEP ARCHIVE</h4><p style="font-size:0.75rem; opacity:0.6; color:#FCF6BA;">深度考古之旅</p></div>', unsafe_allow_html=True)
         if st.button("推开档案之门"): st.session_state.mode = 'deep'; st.rerun()
 
-# --- 模式 A：日常情绪 (专业咨询师视角) ---
+# --- 模式 A：日常情绪 (轻量版) ---
 elif st.session_state.mode == 'daily':
     st.markdown("<h3 style='text-align:center; font-family:Cinzel Decorative; letter-spacing:4px;'>DAILY CLINIC</h3>", unsafe_allow_html=True)
     u_input = st.text_area("", height=200, label_visibility="collapsed", placeholder="请在此处倾诉，无需顾虑逻辑...")
     
     if st.button("生成专家疗愈档案"):
         if u_input:
-            with st.spinner(""):
+            with st.spinner("咨询师正在整理档案..."):
                 client = OpenAI(api_key=st.secrets["DEEPSEEK_API_KEY"], base_url="https://api.deepseek.com")
-                # 提示词强化：专业、深刻、一句话建议
                 prompt = (
                     f"Role: 临床心理咨询师。语气专业、克制且极具洞察力。去聊天化。\n"
                     f"要求：每项仅限一句话。给出能够点破本质的分析。\n"
@@ -179,30 +181,78 @@ elif st.session_state.mode == 'daily':
     
     if st.button("EXIT / 返回大厅"): reset()
 
-# --- 模式 B：深度考古 (叙事重构师视角) ---
+# --- 模式 B：深度考古 (核心优化部分) ---
 elif st.session_state.mode == 'deep':
+    # 这里的顺序必须和 Prompt 里的 5 个维度一一对应
     rooms = [
         {"icon": "🌱", "t": "原生底色", "q": "童年记忆中最深刻的一个画面？父母如何塑造了早期的你？"},
-        {"icon": "✨", "t": "珠光至暗", "q": "最让你感到荣耀的时刻，以及那个让你至今难以释怀的瞬间？"},
-        {"icon": "⚡", "t": "身体警报", "q": "当你压力过载，身体哪个部位会最先代替你发出尖叫？"},
+        {"icon": "✨", "t": "高光至暗", "q": "最让你感到荣耀的时刻，以及那个让你至今难以释怀的瞬间？"},
+        {"icon": "💊", "t": "身体警报", "q": "当你压力过载，身体哪个部位会最先代替你发出尖叫？"},
         {"icon": "🤝", "t": "重要他人", "q": "谁是你生命中爱恨交织、影响至深的“关键他人”？"},
-        {"icon": "🌀", "t": "循环模式", "q": "你发现自己在不断重复上演的某种不快乐的人生剧本？"}
+        {"icon": "🔀", "t": "转折执念", "q": "你发现自己在不断重复上演的某种不快乐的人生剧本？"}
     ]
+    
     if st.session_state.step < len(rooms):
         r = rooms[st.session_state.step]
         st.markdown(f'<div class="golden-frame"><div style="text-align:center; font-size:3.5rem;">{r["icon"]}</div><h3 style="text-align:center;">{r["t"]}</h3><p style="text-align:center; color:#FCF6BA; font-weight:200;">{r["q"]}</p>', unsafe_allow_html=True)
+        # 用 step 做 key，确保每一步清空输入框
         ans = st.text_area("", key=f"d_{st.session_state.step}", height=120, label_visibility="collapsed")
+        
         if st.button("PROCEED / 前进"):
-            if ans: st.session_state.answers.append(ans); st.session_state.step += 1; st.rerun()
+            if ans: 
+                st.session_state.answers.append(ans)
+                st.session_state.step += 1
+                st.rerun()
     else:
+        # === 核心改动区：植入完整版 Prompt ===
         if st.button("GENERATE CLINICAL REPORT / 开启报告"):
-            with st.spinner(""):
+            with st.spinner("正在进入潜意识暗房冲洗胶片..."):
                 client = OpenAI(api_key=st.secrets["DEEPSEEK_API_KEY"], base_url="https://api.deepseek.com")
-                prompt = (
-                    f"Role: 叙事重构师/临床专家。语气冷峻、专业、深刻。每项仅限一句话建议。\n"
-                    f"数据：{' '.join(st.session_state.answers)}\n"
-                    f"格式：\n### 📜 核心剧本\n### 🎯 觉察瞬间\n### 🍃 重构指引"
+                
+                # 1. 系统指令 (System Prompt)
+                system_prompt = """
+                # Role: 人生剧本解码师 (Life Script Decoder)
+                你是一位拥有深厚心理动力学背景的“人生剧本解码师”。
+                
+                ## Tone & Style
+                * **深邃而抱持**：如同深夜电台的心理主播，温暖但犀利。
+                * **隐喻化表达**：善用电影、文学、自然界的隐喻。
+                * **逻辑闭环**：提供逻辑严密的归因分析。
+
+                ## Analysis Framework
+                严格按照以下结构输出 Markdown 报告：
+                1. **🎞️ 叙事重构**：用“英雄之旅”视角，串联用户零散经历中的因果逻辑，寻找隐秘连线。
+                2. **🧬 核心图式**：
+                   - 表层角色：(如：不知疲倦的奔跑者)
+                   - 底层台词：(潜意识循环播放的一句话)
+                   - 心理学归因：结合原生家庭与关键关系分析。
+                3. **📢 躯体化解码**：参考《身体从未忘记》，解读身体症状背后的情绪语言。
+                4. **🔗 未完成的情结**：挖掘那些“强迫性重复”的模式。
+                5. **💡 觉察时刻**：不给廉价建议。给出一个颠覆性提问，和一个具体的行动隐喻。
+                """
+
+                # 2. 用户数据组装 (User Data)
+                # 确保 list index 不会越界，理论上走到这里 len 肯定够
+                user_data = f"""
+                请解码我的人生剧本，我的全量数据如下：
+                
+                1. [原生底色]: {st.session_state.answers[0]}
+                2. [高光与至暗]: {st.session_state.answers[1]}
+                3. [身体的记号]: {st.session_state.answers[2]}
+                4. [关键关系人]: {st.session_state.answers[3]}
+                5. [转折与执念]: {st.session_state.answers[4]}
+                """
+
+                # 3. 发起请求
+                res = client.chat.completions.create(
+                    model="deepseek-chat", 
+                    messages=[
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_data}
+                    ],
+                    temperature=0.7 # 稍微增加一点温度，让隐喻更丰富
                 )
-                res = client.chat.completions.create(model="deepseek-chat", messages=[{"role": "user", "content": prompt}])
+                
                 st.markdown(f'<div class="report-card">{res.choices[0].message.content}</div>', unsafe_allow_html=True)
+        
         if st.button("EXIT / 离开"): reset()
